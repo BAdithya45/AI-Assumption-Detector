@@ -3,74 +3,538 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assumption Detector</title>
+    <title>Assumption Detector | Uncover Hidden Assumptions</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+:root {
+    --bg-primary: #09090b;
+    --bg-secondary: #18181b;
+    --bg-tertiary: #27272a;
+    --bg-hover: #3f3f46;
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+    --accent: #a855f7;
+    --accent-hover: #9333ea;
+    --accent-glow: rgba(168, 85, 247, 0.25);
+    --border: #3f3f46;
+    --risk-low: #22c55e;
+    --risk-low-bg: rgba(34, 197, 94, 0.12);
+    --risk-medium: #f59e0b;
+    --risk-medium-bg: rgba(245, 158, 11, 0.12);
+    --risk-high: #ef4444;
+    --risk-high-bg: rgba(239, 68, 68, 0.12);
+    --error-bg: rgba(239, 68, 68, 0.1);
+    --error-border: rgba(239, 68, 68, 0.4);
+    --radius: 12px;
+    --radius-lg: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(168, 85, 247, 0.15), transparent);
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 24px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--accent), #ec4899);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+h1 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tagline {
+    color: var(--text-secondary);
+    font-size: 18px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.input-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin-bottom: 24px;
+    transition: border-color 0.2s;
+}
+
+.input-card:focus-within {
+    border-color: var(--accent);
+}
+
+.input-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+textarea {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-family: inherit;
+    font-size: 16px;
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 160px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.input-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+}
+
+.char-count {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.btn-analyze {
+    background: linear-gradient(135deg, var(--accent), #9333ea);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.btn-analyze:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px var(--accent-glow);
+}
+
+.btn-analyze:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-analyze:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-analyze .loading {
+    display: none;
+}
+
+.btn-analyze.is-loading .text {
+    display: none;
+}
+
+.btn-analyze.is-loading .loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-box {
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: none;
+}
+
+.error-box.show {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.error-box svg {
+    flex-shrink: 0;
+}
+
+.error-box p {
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.results-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin-bottom: 24px;
+    display: none;
+    animation: slideUp 0.4s ease;
+}
+
+.results-card.show {
+    display: block;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.results-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.count-badge {
+    background: var(--accent-glow);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.summary-text {
+    color: var(--text-secondary);
+    font-size: 15px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+}
+
+.assumption-item {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.assumption-item:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+}
+
+.assumption-item:last-child {
+    margin-bottom: 0;
+}
+
+.assumption-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.assumption-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.risk-tag {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.risk-tag.low {
+    background: var(--risk-low-bg);
+    color: var(--risk-low);
+}
+
+.risk-tag.medium {
+    background: var(--risk-medium-bg);
+    color: var(--risk-medium);
+}
+
+.risk-tag.high {
+    background: var(--risk-high-bg);
+    color: var(--risk-high);
+}
+
+.confidence-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.confidence-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    min-width: 70px;
+}
+
+.confidence-track {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #ec4899);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.confidence-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 40px;
+    text-align: right;
+}
+
+.assumption-details p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    line-height: 1.7;
+}
+
+.assumption-details p:last-child {
+    margin-bottom: 0;
+}
+
+.assumption-details strong {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.examples-section {
+    margin-top: 40px;
+}
+
+.examples-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.examples-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.example-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    color: var(--text-primary);
+}
+
+.example-btn:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.example-btn .icon {
+    font-size: 28px;
+}
+
+.example-btn .label {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+footer {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+footer p {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding: 40px 16px;
+    }
+    
+    h1 {
+        font-size: 28px;
+    }
+    
+    .tagline {
+        font-size: 16px;
+    }
+    
+    .examples-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .assumption-top {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo">
-                <span class="logo-icon">◈</span>
+                <div class="logo-icon">◈</div>
                 <h1>Assumption Detector</h1>
             </div>
             <p class="tagline">Uncover hidden assumptions in your plans, decisions, and communications</p>
         </header>
 
         <main>
-            <section class="input-section">
-                <label for="input-text">Paste your text below</label>
+            <div class="input-card">
+                <label class="input-label" for="inputText">Enter your text to analyze</label>
                 <textarea 
-                    id="input-text" 
-                    placeholder="e.g., We should launch the product next month. The team is ready and customers are waiting..."
-                    rows="6"
+                    id="inputText" 
+                    placeholder="e.g., We should launch the product next month. The team is ready and customers are waiting for this feature..."
                 ></textarea>
                 <div class="input-footer">
-                    <span class="char-count"><span id="char-count">0</span> characters</span>
-                    <button id="analyze-btn" class="btn-primary">
-                        <span class="btn-text">Analyze</span>
-                        <span class="btn-loading">
+                    <span class="char-count"><span id="charCount">0</span> characters</span>
+                    <button id="analyzeBtn" class="btn-analyze">
+                        <span class="text">Analyze Assumptions</span>
+                        <span class="loading">
                             <span class="spinner"></span>
                             Analyzing...
                         </span>
                     </button>
                 </div>
-            </section>
+            </div>
 
-            <section id="error-section" class="error-section hidden">
-                <div class="error-content">
-                    <span class="error-icon">⚠</span>
-                    <p id="error-message"></p>
-                </div>
-            </section>
+            <div id="errorBox" class="error-box">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="9" stroke="#ef4444" stroke-width="2"/>
+                    <path d="M10 6v5M10 14v.01" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <p id="errorText"></p>
+            </div>
 
-            <section id="results-section" class="results-section hidden">
+            <div id="resultsCard" class="results-card">
                 <div class="results-header">
                     <h2>Analysis Results</h2>
-                    <span id="assumption-count" class="badge"></span>
+                    <span id="countBadge" class="count-badge"></span>
                 </div>
-                
-                <div id="summary" class="summary"></div>
-                
-                <div id="assumptions-list" class="assumptions-list"></div>
-            </section>
+                <p id="summaryText" class="summary-text"></p>
+                <div id="assumptionsList"></div>
+            </div>
 
             <section class="examples-section">
-                <h3>Try an example</h3>
-                <div class="examples-grid">
-                    <button class="example-card" data-text="We can finish the project in two weeks if everyone stays focused. The client will approve the design on first review.">
-                        <span class="example-icon">📋</span>
-                        <span class="example-title">Project Planning</span>
+                <h3 class="examples-title">Try an example</h3>
+                <div class="examples-row">
+                    <button class="example-btn" data-text="We can finish the project in two weeks if everyone stays focused. The client will approve the design on first review and there won't be any scope changes.">
+                        <span class="icon">📋</span>
+                        <span class="label">Project Planning</span>
                     </button>
-                    <button class="example-card" data-text="Our new feature will increase user engagement by 30%. Users prefer simplicity over advanced options.">
-                        <span class="example-icon">📈</span>
-                        <span class="example-title">Product Strategy</span>
+                    <button class="example-btn" data-text="Our new feature will increase user engagement by 30%. Users prefer simplicity over advanced options and will adopt it quickly without much onboarding.">
+                        <span class="icon">📈</span>
+                        <span class="label">Product Strategy</span>
                     </button>
-                    <button class="example-card" data-text="We should hire three more engineers. The budget will be approved and we can find qualified candidates quickly.">
-                        <span class="example-icon">👥</span>
-                        <span class="example-title">Team Decisions</span>
+                    <button class="example-btn" data-text="We should hire three more engineers next quarter. The budget will be approved and we can find qualified candidates within a month of posting the job.">
+                        <span class="icon">👥</span>
+                        <span class="label">Team Decisions</span>
                     </button>
                 </div>
             </section>
@@ -81,6 +545,123 @@
         </footer>
     </div>
 
-    <script src="/static/app.js"></script>
+    <script>
+const inputText = document.getElementById('inputText');
+const charCount = document.getElementById('charCount');
+const analyzeBtn = document.getElementById('analyzeBtn');
+const errorBox = document.getElementById('errorBox');
+const errorText = document.getElementById('errorText');
+const resultsCard = document.getElementById('resultsCard');
+const countBadge = document.getElementById('countBadge');
+const summaryText = document.getElementById('summaryText');
+const assumptionsList = document.getElementById('assumptionsList');
+const exampleBtns = document.querySelectorAll('.example-btn');
+
+inputText.addEventListener('input', () => {
+    charCount.textContent = inputText.value.length;
+});
+
+analyzeBtn.addEventListener('click', runAnalysis);
+
+inputText.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+        runAnalysis();
+    }
+});
+
+exampleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        inputText.value = btn.dataset.text;
+        charCount.textContent = inputText.value.length;
+        inputText.focus();
+    });
+});
+
+async function runAnalysis() {
+    const text = inputText.value.trim();
+    
+    if (text.length < 10) {
+        showError('Please enter at least 10 characters to analyze.');
+        return;
+    }
+    
+    hideError();
+    hideResults();
+    setLoading(true);
+    
+    try {
+        const res = await fetch('/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.detail || 'Analysis failed');
+        }
+        
+        showResults(data);
+    } catch (err) {
+        showError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+        setLoading(false);
+    }
+}
+
+function setLoading(loading) {
+    analyzeBtn.disabled = loading;
+    analyzeBtn.classList.toggle('is-loading', loading);
+}
+
+function showError(msg) {
+    errorText.textContent = msg;
+    errorBox.classList.add('show');
+}
+
+function hideError() {
+    errorBox.classList.remove('show');
+}
+
+function hideResults() {
+    resultsCard.classList.remove('show');
+}
+
+function showResults(data) {
+    const count = data.assumptions.length;
+    countBadge.textContent = `${count} assumption${count !== 1 ? 's' : ''} found`;
+    summaryText.textContent = data.summary || 'Analysis complete.';
+    
+    assumptionsList.innerHTML = data.assumptions.map(a => `
+        <div class="assumption-item">
+            <div class="assumption-top">
+                <span class="assumption-text">${escapeHtml(a.text)}</span>
+                <span class="risk-tag ${a.risk}">${a.risk} risk</span>
+            </div>
+            <div class="confidence-row">
+                <span class="confidence-label">Confidence</span>
+                <div class="confidence-track">
+                    <div class="confidence-fill" style="width: ${Math.round(a.confidence * 100)}%"></div>
+                </div>
+                <span class="confidence-value">${Math.round(a.confidence * 100)}%</span>
+            </div>
+            <div class="assumption-details">
+                <p><strong>Why it matters:</strong> ${escapeHtml(a.explanation)}</p>
+                <p><strong>How to validate:</strong> ${escapeHtml(a.validation)}</p>
+            </div>
+        </div>
+    `).join('');
+    
+    resultsCard.classList.add('show');
+    resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+    </script>
 </body>
 </html>

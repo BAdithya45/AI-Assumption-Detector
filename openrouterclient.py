@@ -5,7 +5,7 @@ from typing import Any
 
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-DEFAULT_MODEL = "google/gemma-3-1b-it:free"
+DEFAULT_MODEL = "mistralai/devstral-2512:free"
 TIMEOUT = 60
 MAX_RETRIES = 2
 

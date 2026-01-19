@@ -1,10 +1,17 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 import os
+
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
 
 from schemas import AnalysisRequest, AnalysisResult
 import agent
+
+basedir = os.path.dirname(os.path.abspath(__file__))
 
 app = FastAPI(
     title="Assumption Detector",
@@ -20,10 +27,12 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+app.mount("/static", StaticFiles(directory=os.path.join(basedir, "static")), name="static")
+
 
 @app.get("/")
 async def root():
-    return FileResponse(os.path.join(os.path.dirname(__file__), "static/index.html"))
+    return FileResponse(os.path.join(basedir, "static/index.html"))
 
 
 @app.get("/health")

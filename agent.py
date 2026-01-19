@@ -84,7 +84,7 @@ async def analyze(text: str) -> AnalysisResult:
         result = parse_model_response(raw)
         return result
     
-    except openrouterclient.ModelError:
+    except openrouterclient.ModelError as e:
         return fallback_result()
-    except Exception:
+    except Exception as e:
         return fallback_result()
