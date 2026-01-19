@@ -6,10 +6,13 @@ from prompts import SYSTEM_PROMPT, build_user_prompt
 import openrouterclient
 
 
-def fallback_result() -> AnalysisResult:
+def fallback_result(error: str = "") -> AnalysisResult:
+    msg = "Unable to analyze the input. Please provide clear text to examine."
+    if error:
+        msg = f"Error: {error}"
     return AnalysisResult(
         assumptions=[],
-        summary="Unable to analyze the input. Please provide clear text to examine."
+        summary=msg
     )
 
 
@@ -85,6 +88,6 @@ async def analyze(text: str) -> AnalysisResult:
         return result
     
     except openrouterclient.ModelError as e:
-        return fallback_result()
+        return fallback_result(f"Model error: {str(e)}")
     except Exception as e:
-        return fallback_result()
+        return fallback_result(f"{type(e).__name__}: {str(e)}")
