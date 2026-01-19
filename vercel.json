@@ -3,37 +3,16 @@
     "builds": [
         {
             "src": "api.py",
-            "use": "@vercel/python"
-        },
-        {
-            "src": "static/**",
-            "use": "@vercel/static"
+            "use": "@vercel/python",
+            "config": {
+                "maxLambdaSize": "15mb"
+            }
         }
     ],
     "routes": [
         {
-            "src": "/static/(.*)",
-            "dest": "/static/$1"
-        },
-        {
-            "src": "/health",
-            "dest": "/api.py"
-        },
-        {
-            "src": "/analyze",
-            "dest": "/api.py"
-        },
-        {
-            "src": "/docs",
-            "dest": "/api.py"
-        },
-        {
-            "src": "/openapi.json",
-            "dest": "/api.py"
-        },
-        {
             "src": "/(.*)",
-            "dest": "/static/index.html"
+            "dest": "/api.py"
         }
     ]
 }
