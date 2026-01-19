@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assumption Detector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">◈</span>
+                <h1>Assumption Detector</h1>
+            </div>
+            <p class="tagline">Uncover hidden assumptions in your plans, decisions, and communications</p>
+        </header>
+
+        <main>
+            <section class="input-section">
+                <label for="input-text">Paste your text below</label>
+                <textarea 
+                    id="input-text" 
+                    placeholder="e.g., We should launch the product next month. The team is ready and customers are waiting..."
+                    rows="6"
+                ></textarea>
+                <div class="input-footer">
+                    <span class="char-count"><span id="char-count">0</span> characters</span>
+                    <button id="analyze-btn" class="btn-primary">
+                        <span class="btn-text">Analyze</span>
+                        <span class="btn-loading">
+                            <span class="spinner"></span>
+                            Analyzing...
+                        </span>
+                    </button>
+                </div>
+            </section>
+
+            <section id="error-section" class="error-section hidden">
+                <div class="error-content">
+                    <span class="error-icon">⚠</span>
+                    <p id="error-message"></p>
+                </div>
+            </section>
+
+            <section id="results-section" class="results-section hidden">
+                <div class="results-header">
+                    <h2>Analysis Results</h2>
+                    <span id="assumption-count" class="badge"></span>
+                </div>
+                
+                <div id="summary" class="summary"></div>
+                
+                <div id="assumptions-list" class="assumptions-list"></div>
+            </section>
+
+            <section class="examples-section">
+                <h3>Try an example</h3>
+                <div class="examples-grid">
+                    <button class="example-card" data-text="We can finish the project in two weeks if everyone stays focused. The client will approve the design on first review.">
+                        <span class="example-icon">📋</span>
+                        <span class="example-title">Project Planning</span>
+                    </button>
+                    <button class="example-card" data-text="Our new feature will increase user engagement by 30%. Users prefer simplicity over advanced options.">
+                        <span class="example-icon">📈</span>
+                        <span class="example-title">Product Strategy</span>
+                    </button>
+                    <button class="example-card" data-text="We should hire three more engineers. The budget will be approved and we can find qualified candidates quickly.">
+                        <span class="example-icon">👥</span>
+                        <span class="example-title">Team Decisions</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Built with care · Powered by AI</p>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
