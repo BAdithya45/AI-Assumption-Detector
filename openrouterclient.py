@@ -11,7 +11,7 @@ MAX_RETRIES = 2
 
 
 def get_api_key() -> str:
-    key = os.environ.get("OPENROUTER_API_KEY", "")
+    key = os.environ.get("OPENROUTER_API_KEY", "").strip()
     if not key:
         raise ValueError("OPENROUTER_API_KEY environment variable is not set")
     return key
