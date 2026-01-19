@@ -389,54 +389,89 @@ textarea::placeholder {
     font-weight: 500;
 }
 
-.examples-section {
+.info-section {
     margin-top: 40px;
 }
 
-.examples-title {
+.info-title {
     font-size: 13px;
     font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
-.examples-row {
+.info-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 16px;
+    margin-bottom: 20px;
 }
 
-.example-btn {
+.info-card {
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 20px 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    font-family: inherit;
+    padding: 20px;
+    text-align: center;
+}
+
+.info-card:hover {
+    border-color: var(--accent);
+}
+
+.info-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.info-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
     color: var(--text-primary);
 }
 
-.example-btn:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--accent);
-    transform: translateY(-2px);
-}
-
-.example-btn .icon {
-    font-size: 28px;
-}
-
-.example-btn .label {
+.info-card p {
     font-size: 13px;
-    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.usage-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+}
+
+.usage-box h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.usage-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.usage-box li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.usage-box li:last-child {
+    border-bottom: none;
+}
+
+.usage-box strong {
+    color: var(--accent);
 }
 
 footer {
@@ -464,7 +499,7 @@ footer p {
         font-size: 16px;
     }
     
-    .examples-row {
+    .info-grid {
         grid-template-columns: 1fr;
     }
     
@@ -521,21 +556,33 @@ footer p {
                 <div id="assumptionsList"></div>
             </div>
 
-            <section class="examples-section">
-                <h3 class="examples-title">Try an example</h3>
-                <div class="examples-row">
-                    <button class="example-btn" data-text="We can finish the project in two weeks if everyone stays focused. The client will approve the design on first review and there won't be any scope changes.">
-                        <span class="icon">📋</span>
-                        <span class="label">Project Planning</span>
-                    </button>
-                    <button class="example-btn" data-text="Our new feature will increase user engagement by 30%. Users prefer simplicity over advanced options and will adopt it quickly without much onboarding.">
-                        <span class="icon">📈</span>
-                        <span class="label">Product Strategy</span>
-                    </button>
-                    <button class="example-btn" data-text="We should hire three more engineers next quarter. The budget will be approved and we can find qualified candidates within a month of posting the job.">
-                        <span class="icon">👥</span>
-                        <span class="label">Team Decisions</span>
-                    </button>
+            <section class="info-section">
+                <h3 class="info-title">How It Works</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-icon">🔍</div>
+                        <h4>AI-Powered Analysis</h4>
+                        <p>Our system uses advanced language models to scan your text and identify statements that contain hidden assumptions—beliefs or expectations not explicitly stated but implied.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">⚡</div>
+                        <h4>Risk Assessment</h4>
+                        <p>Each assumption is evaluated for risk level (low, medium, high) based on potential impact if the assumption proves false. Higher risk means greater potential consequences.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">✅</div>
+                        <h4>Validation Steps</h4>
+                        <p>For each assumption, you get actionable validation steps—specific questions to ask or research to conduct to verify whether the assumption holds true.</p>
+                    </div>
+                </div>
+                <div class="usage-box">
+                    <h4>💡 Best Practices</h4>
+                    <ul>
+                        <li><strong>Project plans:</strong> "We'll launch in Q2" → assumes resources, approvals, no blockers</li>
+                        <li><strong>Business decisions:</strong> "Customers want this feature" → assumes market research is current</li>
+                        <li><strong>Team communications:</strong> "Everyone agrees" → assumes alignment and buy-in</li>
+                        <li><strong>Budgets & timelines:</strong> "It will cost $X" → assumes no scope changes or surprises</li>
+                    </ul>
                 </div>
             </section>
         </main>
@@ -555,7 +602,6 @@ const resultsCard = document.getElementById('resultsCard');
 const countBadge = document.getElementById('countBadge');
 const summaryText = document.getElementById('summaryText');
 const assumptionsList = document.getElementById('assumptionsList');
-const exampleBtns = document.querySelectorAll('.example-btn');
 
 inputText.addEventListener('input', () => {
     charCount.textContent = inputText.value.length;
@@ -567,14 +613,6 @@ inputText.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && e.ctrlKey) {
         runAnalysis();
     }
-});
-
-exampleBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        inputText.value = btn.dataset.text;
-        charCount.textContent = inputText.value.length;
-        inputText.focus();
-    });
 });
 
 async function runAnalysis() {
