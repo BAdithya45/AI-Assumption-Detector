@@ -4,7 +4,7 @@ A full-stack AI application that uncovers hidden assumptions in text, helping yo
 
 ## Live Demo
 
-🔗 **[Live Application]([https://your-app.vercel.app](https://github.com/BAdithya45/AI-Assumption-Detector.git))**
+🔗 **[Live Application](https://github.com/BAdithya45/AI-Assumption-Detector.git))**
 
 ## Features
 
